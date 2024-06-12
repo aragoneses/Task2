@@ -1,0 +1,9 @@
+master:
+  ip: localhost
+  port: 32790
+
+slaves:
+  - ip: localhost
+    port: 32791
+  - ip: localhost
+    port: 32792
