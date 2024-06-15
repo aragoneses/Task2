@@ -1,46 +1,29 @@
-import signal
-import subprocess
 import sys
 import os
 import time
 
-def signal_handler(sig, frame):
-    # Terminar los subprocesos
-    print("\033[92mTerminando todos los subprocesos...\033[0m")
-    for process in processes:
-        process.terminate()
-    sys.exit(0)
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/Decentralized')
 
-# Registrar el manejador de señales para SIGTERM y SIGINT
-signal.signal(signal.SIGTERM, signal_handler)
-signal.signal(signal.SIGINT, signal_handler)
+from Node import serve as serve
 
-# Lista para almacenar los subprocesos
-processes = []
+import yaml
+import threading
 
-try:
-    # Ejecutar el servidor y agregar el proceso a la lista
-    server_process = subprocess.Popen([sys.executable, 'descentralizado/destorage.py'])
-    processes.append(server_process)
+if __name__ == '__main__':
+    with open('decentralized_config.yaml', 'r') as file:
+        config = yaml.safe_load(file)
 
-    # Ejecutar el primer script y agregar el proceso a la lista
-    server_process = subprocess.Popen([sys.executable, 'descentralizado/node1.py'])
-    processes.append(server_process)
+    slave_configs = config["nodes"]
+    slaves = []
 
-    # Ejecutar el segundo script y agregar el proceso a la lista
-    node0_process = subprocess.Popen([sys.executable, 'descentralizado/node2.py'])
-    processes.append(node0_process)
+    node0_host = f"{slave_configs[0]['ip']}:{slave_configs[0]['port']}"
+    node0_weight = slave_configs[0]["weight"]
 
-    # Ejecutar el tercer script y agregar el proceso a la lista
-    node1_process = subprocess.Popen([sys.executable, 'descentralizado/node3.py'])
-    processes.append(node1_process)
+    for slave_config in slave_configs:
+        slave = threading.Thread(target=serve, args=(slave_config['ip'], slave_config['port'], node0_host, slave_config['weight'], node0_weight))
+        slave.start()
+        slaves.append(slave)
+        time.sleep(1)
 
-    # Comprobar si el proceso principal sigue en ejecución
-    while True:
-        if os.getppid() == 1:  # Si el ID del proceso padre es 1 (init), se termina el proceso principal
-            signal_handler(signal.SIGTERM, None)
-        time.sleep(1)  # Esperar 1 segundo antes de volver a comprobar
-
-except KeyboardInterrupt:
-    # Manejar Ctrl+C para terminar los subprocesos
-    signal_handler(signal.SIGINT, None)
+    for slave in slaves:
+        slave.join()

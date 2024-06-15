@@ -1,5 +1,7 @@
 {
     "python.analysis.extraPaths": [
-        "./proto"
+        "./proto",
+        "./Decentralized",
+        "./Centralized"
     ]
 }
