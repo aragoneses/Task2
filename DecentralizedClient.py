@@ -8,24 +8,24 @@ import grpc
 import store_pb2 as store_pb2
 import store_pb2_grpc as store_pb2_grpc
 
-def put(key, value):
-    request = store_pb2.PutRequest(key=key, value=value)
-    response = stub[node].put(request)
-    return response.success
-
 def get(key):
     request = store_pb2.GetRequest(key=key)
     response = stub[node].get(request)
     return response.value, response.found
 
-def slow_down(seconds):
-    request = store_pb2.SlowDownRequest(seconds=seconds)
-    response = stub[node].slowDown(request)
+def put(key, value):
+    request = store_pb2.PutRequest(key=key, value=value)
+    response = stub[node].put(request)
     return response.success
 
 def restore():
     request = store_pb2.RestoreRequest()
     response = stub[node].restore(request)
+    return response.success
+
+def slow_down(seconds):
+    request = store_pb2.SlowDownRequest(seconds=seconds)
+    response = stub[node].slowDown(request)
     return response.success
 
 with open('decentralized_config.yaml', 'r') as file:
