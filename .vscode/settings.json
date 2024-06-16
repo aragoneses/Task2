@@ -3,5 +3,6 @@
         "./proto",
         "./Decentralized",
         "./Centralized"
-    ]
+    ],
+    "python.formatting.provider": "black"
 }

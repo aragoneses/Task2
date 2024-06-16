@@ -1,128 +1,126 @@
-syntax = "proto3";
+syntax = "proto3";  // Se especifica que se está utilizando la sintaxis de proto3
 
-package distributedstore;
+package distributedstore;  // Se define el paquete para los mensajes y servicios
 
+// Definición del servicio KeyValueStore
 service KeyValueStore {
-  
 
-  // Client functions
+  // Funciones del cliente
 
-  rpc put(PutRequest) returns (PutResponse);
+  rpc put(PutRequest) returns (PutResponse);  // Función para almacenar o actualizar un valor
 
-  rpc get(GetRequest) returns (GetResponse);
+  rpc get(GetRequest) returns (GetResponse);  // Función para obtener un valor
 
-  rpc slowDown(SlowDownRequest) returns (SlowDownResponse);
+  rpc slowDown(SlowDownRequest) returns (SlowDownResponse);  // Función para ralentizar respuestas
 
-  rpc restore(RestoreRequest) returns (RestoreResponse);
+  rpc restore(RestoreRequest) returns (RestoreResponse);  // Función para restaurar velocidad normal
 
 
-  // Server functions
+  // Funciones del servidor
 
-  rpc prepare(PrepareRequest) returns (PrepareResponse);
+  rpc prepare(PrepareRequest) returns (PrepareResponse);  // Preparar una transacción
 
-  rpc commit(CommitRequest) returns (CommitResponse);
+  rpc commit(CommitRequest) returns (CommitResponse);  // Confirmar una transacción
 
-  rpc abort(AbortRequest) returns (AbortResponse);
+  rpc abort(AbortRequest) returns (AbortResponse);  // Cancelar una transacción
 
-  rpc register(RegisterRequest) returns (RegisterResponse);
+  rpc register(RegisterRequest) returns (RegisterResponse);  // Registrar un nuevo nodo
 
-  rpc unregister(UnregisterRequest) returns (UnregisterResponse);
+  rpc unregister(UnregisterRequest) returns (UnregisterResponse);  // Eliminar el registro de un nodo
 
-  rpc addcon(AddConRequest) returns (AddConResponse);
+  rpc addcon(AddConRequest) returns (AddConResponse);  // Agregar una conexión entre nodos
 
-  rpc privGet(GetRequest) returns (GetResponse);
+  rpc privGet(GetRequest) returns (GetResponse);  // Obtener un valor directamente sin coordinación
 
 }
 
-// Server messages
+// Mensajes utilizados por el servidor
 
 message PrepareRequest {
-  string key = 1;
-  string value = 2;
+  string key = 1;   // Clave para la operación de preparación
+  string value = 2;  // Valor asociado con la clave para la operación de preparación
 }
 
 message PrepareResponse {
-  bool success = 1;
+  bool success = 1;  // Indica si la operación de preparación fue exitosa
 }
 
 message CommitRequest {
-  string key = 1;
+  string key = 1;  // Clave para la operación de confirmación
 }
 
 message CommitResponse {
-  bool success = 1;
+  bool success = 1;  // Indica si la operación de confirmación fue exitosa
 }
 
 message AbortRequest {
-  string key = 1;
+  string key = 1;  // Clave para la operación de aborto
 }
 
 message AbortResponse {
-  bool success = 1;
+  bool success = 1;  // Indica si la operación de aborto fue exitosa
 }
 
 message RegisterRequest {
-  string ip = 1;
-  int32 port = 2;
-  int32 weight = 3;
+  string ip = 1;    // Dirección IP del nodo que se está registrando
+  int32 port = 2;   // Puerto del nodo que se está registrando
+  int32 weight = 3;  // Peso o importancia del nodo que se está registrando
 }
 
 message RegisterResponse {
-  bool success = 1;
+  bool success = 1;  // Indica si el registro fue exitoso
 }
 
 message UnregisterRequest {
-  string ip = 1;
-  int32 port = 2;
+  string ip = 1;    // Dirección IP del nodo que se quiere eliminar del registro
+  int32 port = 2;   // Puerto del nodo que se quiere eliminar del registro
 }
 
 message UnregisterResponse {
-  bool success = 1;
+  bool success = 1;  // Indica si la eliminación del registro fue exitosa
 }
 
 message AddConRequest {
-  int32 num = 1;
+  int32 num = 1;    // Número de conexión entre nodos que se está solicitando
 }
 
 message AddConResponse {
-  string node = 1;
-  int32 weight = 2;
+  string node = 1;   // Nodo al que se debe conectar
+  int32 weight = 2;  // Peso del nodo al que se debe conectar
 }
 
-// Client messages
+// Mensajes utilizados por el cliente
 
 message PutRequest {
-  string key = 1;
-  string value = 2;
+  string key = 1;   // Clave para la operación de almacenamiento o actualización
+  string value = 2;  // Valor asociado con la clave para la operación de almacenamiento o actualización
 }
 
 message PutResponse {
-  bool success = 1;
+  bool success = 1;  // Indica si la operación de almacenamiento o actualización fue exitosa
 }
 
 message GetRequest {
-  string key = 1;
+  string key = 1;   // Clave para la operación de obtención de valor
 }
 
 message GetResponse {
-  string value = 1;
-  bool found = 2;
+  string value = 1;  // Valor asociado con la clave obtenida
+  bool found = 2;   // Indica si se encontró o no el valor asociado con la clave
 }
 
 message SlowDownRequest {
-  int32 seconds = 1;
+  int32 seconds = 1;  // Segundos durante los cuales se debe ralentizar la respuesta del servidor
 }
 
 message SlowDownResponse {
-  bool success = 1;
+  bool success = 1;  // Indica si la solicitud de ralentización fue exitosa
 }
 
-message RestoreRequest {}
+message RestoreRequest {}  // Mensaje vacío para la solicitud de restaurar velocidad normal
 
 message RestoreResponse {
-  bool success = 1;
+  bool success = 1;  // Indica si la restauración de la velocidad normal fue exitosa
 }
 
-message Empty {
-    
-}
+message Empty {}  // Mensaje vacío utilizado para operaciones que no requieren parámetros
